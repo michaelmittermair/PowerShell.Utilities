@@ -8,7 +8,7 @@ $Logfile = "C:\Robocopy_Log\Robocopy.log"
 $Subject = "Robocopy Results: Copy Purpose: Location 2 Location"
 $SMTPServer = "127.0.0.1"
 $Sender = "Server01 <mail@domain.local>"
-$Recipients = "Support <support@mail@domain.local>"
+$Recipients = "Support <support@domain.local>"
 $Admin = "Michael Mittermair <mail@domain.local>"
 $SendEmail = $True
 $IncludeAdmin = $True
@@ -30,68 +30,110 @@ Switch ($LASTEXITCODE)
 	16
 	{
 		$exit_code = "16"
-		$exit_reason = "[***FATAL ERROR*** Robocopy did not copy any files.  Check the command line parameters and verify that Robocopy has enough rights to write to the destination folder"
-        $backupState = "ERROR"
+		$exit_reason = "[***FATAL ERROR***] Robocopy did not copy any files.  Check the command line parameters and verify that Robocopy has enough rights to write to the destination folder"
+		$backupState = "ERROR"
+	}
+	15
+	{
+		$exit_code = "15"
+		$exit_reason = "[FAILED] OKCOPY + FAIL MISMATCH EXTRA COPY"
+		$backupState = "ERROR"
+	}
+	14
+	{
+		$exit_code = "14"
+		$exit_reason = "[FAILED] FAIL MISMATCH EXTRA"
+		$backupState = "ERROR"
+	}
+	13
+	{
+		$exit_code = "13"
+		$exit_reason = "[FAILED] OKCOPY + FAIL MISMATCH COPY"
+		$backupState = "ERROR"
+	}
+	12
+	{
+		$exit_code = "12"
+		$exit_reason = "[FAILED] FAIL MISMATCH"
+		$backupState = "ERROR"
+	}
+	11
+	{
+		$exit_code = "11"
+		$exit_reason = "[FAILED] OKCOPY + FAIL EXTRA COPY"
+		$backupState = "ERROR"
+	}
+	10
+	{
+		$exit_code = "10"
+		$exit_reason = "[FAILED] FAIL EXTRA"
+		$backupState = "ERROR"
+	}
+	9
+	{
+		$exit_code = "9"
+		$exit_reason = "[FAILED] FAIL COPY"
+		$backupState = "ERROR"
 	}
 	8
 	{
 		$exit_code = "8"
-		$exit_reason = "**FAILED COPIES** Some files or directories could not be copied and the retry limit was exceeded"
-        $backupState = "ERROR"
+		$exit_reason = "[FAILED COPIES] Some files or directories could not be copied and the retry limit was exceeded"
+		$backupState = "ERROR"
 	}
     7
 	{
 		$exit_code = "7"
 		$exit_reason = "Files were copied, a file mismatch was present, and additional files were present."
-        $backupState = "ERROR"
+		$backupState = "ERROR"
 	}
     6
     {
-        $exit_code = "6"
+		$exit_code = "6"
 		$exit_reason = "Additional files and mismatched files exist. No files were copied and no failures were encountered. This means that the files already exist in the destination directory."
 		$IncludeAdmin = $False
-        $backupState = "ERROR"
+		$backupState = "ERROR"
     }
     5
     {
-        $exit_code = "5"
+		$exit_code = "5"
 		$exit_reason = "Some files were copied. Some files were mismatched. No failure was encountered."
 		$IncludeAdmin = $False
-        $backupState = "ERROR"
+		$backupState = "ERROR"
     }
 	4
 	{
 		$exit_code = "4"
 		$exit_reason = "MISMATCHED files or directories were detected.  Examine the log file for more information"
 		$IncludeAdmin = $False
-        $backupState = "ERROR"
+		$backupState = "ERROR"
 	}
     3
     {
-        $exit_code = "3"
+		$exit_code = "3"
 		$exit_reason = "Some files were copied. Additional files were present. No failure was encountered."
 		$IncludeAdmin = $False
-        $backupState = "SUCCESSFULL"
+		$backupState = "SUCCESSFULL"
     }
 	2
 	{
 		$exit_code = "2"
 		$exit_reason = "EXTRA FILES or directories were detected.  Examine the log file for more information"
 		$IncludeAdmin = $False
-        $backupState = "SUCCESSFULL"
+		$backupState = "SUCCESSFULL"
 	}
 	1
 	{
 		$exit_code = "1"
 		$exit_reason = "One of more files were copied SUCCESSFULLY"
 		$IncludeAdmin = $False
-        $backupState = "SUCCESSFULL"
+		$backupState = "SUCCESSFULL"
 	}
 	0
 	{
 		$exit_code = "0"
-		$exit_reason = "NO ERRORS occurred and no files were copied"
-        $backupState = "SUCCESSFULL"
+		$exit_reason = "NO CHANGE occurred and no files were copied"
+		$backupState = "SUCCESSFULL"
 		$SendEmail = $False
 		$IncludeAdmin = $False
 	}
