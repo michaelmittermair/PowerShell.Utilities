@@ -20,7 +20,7 @@ $backupState = "UNKNOWN"
 #*=============================================
 
 # Change robocopy options as needed. ( http://ss64.com/nt/robocopy.html )
-robocopy $sourcePath $destinationPath /MIR /FFT /R:2 /LOG:$Logfile
+robocopy $sourcePath $destinationPath /MIR /FFT /R:2 /LOG:$Logfile  /XA:S /XD *RECYCLE.BIN*
 
 # The following attempts to get the error code for Robocopy
 # and use this as extra infromation and email determination.
