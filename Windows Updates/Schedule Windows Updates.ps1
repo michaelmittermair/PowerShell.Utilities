@@ -1,36 +1,48 @@
 ﻿function Create-Windows-Update-Task {
-    param($name, $program, $programArguments)
+    param($taskName, $program, $programArguments)
     
-    $service = New-Object -ComObject "Schedule.Service"
-    $service.Connect($ENV:ComputerName)
+    # connecting to local task scheduler
+    $Service = New-Object -ComObject Schedule.Service
+    $Service.Connect($ENV:ComputertaskName)
+    $TaskFolder = $Service.GetFolder("\")
 
-    $rootFolder = $service.GetFolder("\")
-    $taskDefinition = $service.NewTask(0)
+    # first delete the task, than create it new
+    # get tasks in folder
+    $Tasks = $TaskFolder.GetTasks(1)
+    # step through all tasks in the folder
+    foreach($Task in $Tasks){
+        if($Task.Name -eq $taskName){
+            $TaskFolder.DeleteTask($Task.Name,0)
+        }
+    }
 
-    $regInfo = $taskDefinition.RegistrationInfo
-    $regInfo.Description = 'Windows Update - start at 05:00 daily'
-    $regInfo.Author = $taskRunAsuser
-    $settings = $taskDefinition.Settings
-    $settings.Enabled = $True
-    $settings.StartWhenAvailable = $True
-    $settings.Hidden = $False
+    #creating the task
+    $TaskDefinition = $Service.NewTask(0)
+
+    $RegInfo = $TaskDefinition.RegistrationInfo
+    $RegInfo.Description = 'Windows Update - start at 05:00 daily'
+    $RegInfo.Author = $taskRunAsuser
+    $Settings = $TaskDefinition.Settings
+    $Settings.Enabled = $True
+    $Settings.StartWhenAvailable = $True
+    $Settings.Hidden = $False
       
-    $trigger = $taskDefinition.Triggers.Create(2)
-    $trigger.StartBoundary = (Get-Date 05:00AM).AddDays(1) | Get-Date -Format yyyy-MM-ddTHH:ss:ms
-    $trigger.DaysInterval = 1
-    $trigger.Id = "DailyTriggerId"
-    $trigger.Enabled = $True
+    $Trigger = $TaskDefinition.Triggers.Create(2)
+    $Trigger.StartBoundary = (Get-Date 05:00AM).AddDays(1) | Get-Date -Format yyyy-MM-ddTHH:ss:ms
+    $Trigger.DaysInterval = 1
+    $Trigger.Id = "DailyTriggerId"
+    $Trigger.Enabled = $True
    
-    $action = $taskDefinition.Actions.Create(0)
-    $action.Path = $program
-    $action.Arguments = $programArguments
+    $Action = $TaskDefinition.Actions.Create(0)
+    $Action.Path = $program
+    $Action.Arguments = $programArguments
     
-    $principal = $taskDefinition.Principal
-    $principal.RunLevel = 1 # 0=normal, 1=Highest Privileges
+    $Principal = $TaskDefinition.Principal
+    $Principal.RunLevel = 1 # 0=normal, 1=Highest Privileges
        
-    $rootFolder.RegisterTaskDefinition($name, $taskDefinition, 2, "System", $null , 5)
+    $TaskFolder.RegisterTaskDefinition($taskName, $TaskDefinition, 2, "System", $null , 5)
 }
 
-$filePath = "c:\Update\WindowsUpdateViaPS.ps1"
+$FilePath = "c:\WindowsUpdate\WindowsUpdateViaPS.ps1"
 
-Create-Windows-Update-Task ("Windows Update") ("powershell") ("-file " + $filePath)
+Create-Windows-Update-Task ("PS Windows Update") ("powershell") ("-file " + $FilePath)
