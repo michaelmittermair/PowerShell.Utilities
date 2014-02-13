@@ -14,15 +14,12 @@ if($action -eq "remove"){
         $net.RemoveNetworkDrive($_.value, "TRUE","TRUE")
     }
 } else {
-    $Username = Read-Host "Benutzername: "
-    $Password = Read-Host "Password: "
-    
-    if (!$Username) { $Username="default user" }
-    if (!$Password) { $Password="default password" }
+    se {
+    $Credential = Get-Credential
 
     $net = New-Object -com WScript.Network    
     $Shares.GetEnumerator() | % { 
-        $net.MapNetworkDrive($_.value, $_.key , "false", $Username, $Password)
-    }    
+        $net.MapNetworkDrive($_.value, $_.key , "false", $Credential.get_UserName(), $Credential.GetNetworkCredential().Password)
+    }
 }
 
