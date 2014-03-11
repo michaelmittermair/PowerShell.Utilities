@@ -14,7 +14,6 @@ if($action -eq "remove"){
         $net.RemoveNetworkDrive($_.value, "TRUE","TRUE")
     }
 } else {
-    se {
     $Credential = Get-Credential
 
     $net = New-Object -com WScript.Network    
@@ -22,4 +21,3 @@ if($action -eq "remove"){
         $net.MapNetworkDrive($_.value, $_.key , "false", $Credential.get_UserName(), $Credential.GetNetworkCredential().Password)
     }
 }
-
